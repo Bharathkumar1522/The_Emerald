@@ -66,6 +66,7 @@ export default function Showcase() {
                     fill
                     className="object-cover object-top"
                     sizes="100vw"
+                    quality={100}
                 />
 
                 {/* Overlays to ensure text legibility */}
