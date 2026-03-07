@@ -96,10 +96,10 @@ export default function Hero() {
         }, (context) => {
             const { isMobile } = context.conditions as { isMobile: boolean };
 
-            // On mobile, the scroll distance is much longer (1200% of viewport height)
-            // This forces the user to scroll physically further to scrub through the 240 frames,
-            // resulting in a "looser", slower, and more controlled video playback on touch.
-            const scrollDistance = isMobile ? "+=1200%" : "+=700%";
+            // On mobile, the scroll distance is drastically reduced to roughly match the momentum 
+            // of the rest of the document. This prevents the user from building up massive "swiping force" 
+            // that accidentally slingshots them down the page once the video unpins.
+            const scrollDistance = isMobile ? "+=350%" : "+=700%";
 
             const proxy = { frame: 0 };
 
