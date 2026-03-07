@@ -61,9 +61,18 @@ export default function Hero() {
         const timer = setTimeout(() => loadRange(12, TOTAL_FRAMES - 1, false), 80);
         imagesRef.current = images as HTMLImageElement[];
 
+        let lastWidth = -1;
         const resize = () => {
             const canvas = canvasRef.current;
             if (!canvas) return;
+
+            // Mobile Optimization: When scrolling on phones, the address bar shows/hides,
+            // triggering continuous `resize` events. Reassigning canvas.width clears the entire
+            // canvas context, causing massive flickering. We block vertical-only resizes here.
+            // The CSS `height: 100%` will simply stretch the canvas slightly, which is imperceptible.
+            if (window.innerWidth === lastWidth && canvas.width > 0) return;
+
+            lastWidth = window.innerWidth;
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             drawFrame(frameRef.current.current);
