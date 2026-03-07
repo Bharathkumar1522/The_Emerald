@@ -65,8 +65,7 @@ export default function Showcase() {
                     alt="The Art of Tailoring"
                     fill
                     className="object-cover object-top"
-                    sizes="100vw"
-                    quality={100}
+                    unoptimized={true}
                 />
 
                 {/* Overlays to ensure text legibility */}

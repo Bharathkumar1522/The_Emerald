@@ -202,8 +202,7 @@ export default function About() {
                                 fill
                                 className="object-cover"
                                 style={{ objectPosition: "center top" }}
-                                sizes="(max-width: 1024px) 100vw, 50vw"
-                                quality={100}
+                                unoptimized={true}
                                 priority
                             />
                         </div>
