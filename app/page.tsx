@@ -53,7 +53,7 @@ export default function Home() {
                 className="relative invisible"
                 style={{
                     zIndex: 10,
-                    marginTop: "-100svh",   // About enters viewport at 67% of hero pin — later enough to see video, early enough for stack
+                    marginTop: "-100vh",   // About enters viewport at 67% of hero pin — later enough to see video, early enough for stack
                 }}
             >
                 <About />

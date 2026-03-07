@@ -47,13 +47,14 @@ export default function Hero() {
 
         (canvasRef as any).drawFrame = drawFrame;
 
-        // Preloading is now fully managed and blocked by LoadingScreen.tsx
-        // Only loading the very first frame immediately for the initial static draw
-        const img = new Image();
-        img.fetchPriority = "high";
-        img.src = FRAME_PATH(1);
-        img.onload = () => { drawFrame(0); };
-        images[0] = img;
+        // Next.js (via LoadingScreen) has already downloaded the frames into the browser cache.
+        // We just need to legally instantiate HTMLImageElement references so canvas can draw them.
+        for (let i = 0; i < TOTAL_FRAMES; i++) {
+            const img = new Image();
+            img.src = FRAME_PATH(i + 1);
+            if (i === 0) img.onload = () => drawFrame(0);
+            images[i] = img;
+        }
 
         imagesRef.current = images as HTMLImageElement[];
 
@@ -101,7 +102,6 @@ export default function Hero() {
                 pin: true,
                 anticipatePin: 1,
                 pinSpacing: true,
-                pinType: "transform",
             },
             defaults: { ease: "none" },
         });
@@ -178,7 +178,7 @@ export default function Hero() {
         <section
             ref={sectionRef}
             data-nav-theme="dark"
-            className="relative w-full h-[100svh] overflow-hidden"
+            className="relative w-full h-screen overflow-hidden"
             style={{ background: "#050e0a", zIndex: 0 }}
         >
             {/* Video canvas — Hardware Accelerated */}
