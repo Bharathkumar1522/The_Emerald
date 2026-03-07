@@ -6,6 +6,7 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 const TOTAL_FRAMES = 240;
 const FRAME_PATH = (i: number) =>
@@ -177,7 +178,7 @@ export default function Hero() {
         <section
             ref={sectionRef}
             data-nav-theme="dark"
-            className="relative w-full h-screen overflow-hidden"
+            className="relative w-full h-[100svh] overflow-hidden"
             style={{ background: "#050e0a", zIndex: 0 }}
         >
             {/* Video canvas */}
