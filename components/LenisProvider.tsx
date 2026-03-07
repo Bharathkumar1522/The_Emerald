@@ -18,9 +18,6 @@ export default function LenisProvider({
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             orientation: "vertical",
             smoothWheel: true,
-            lerp: 0.05,
-            // @ts-ignore - 'smoothTouch' is supported by Lenis JS but missing in outdated type definition
-            smoothTouch: true,
         });
 
         // Sync Lenis with GSAP ticker for perfectly smooth ScrollTrigger
