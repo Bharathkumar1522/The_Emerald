@@ -47,19 +47,14 @@ export default function Hero() {
 
         (canvasRef as any).drawFrame = drawFrame;
 
-        const loadRange = (start: number, end: number, priority: boolean) => {
-            for (let i = start; i <= end; i++) {
-                if (images[i]) continue;
-                const img = new Image();
-                if (priority) img.fetchPriority = "high";
-                img.src = FRAME_PATH(i + 1);
-                img.onload = () => { if (i === 0) drawFrame(0); };
-                images[i] = img;
-            }
-        };
+        // Preloading is now fully managed and blocked by LoadingScreen.tsx
+        // Only loading the very first frame immediately for the initial static draw
+        const img = new Image();
+        img.fetchPriority = "high";
+        img.src = FRAME_PATH(1);
+        img.onload = () => { drawFrame(0); };
+        images[0] = img;
 
-        loadRange(0, 11, true);
-        const timer = setTimeout(() => loadRange(12, TOTAL_FRAMES - 1, false), 80);
         imagesRef.current = images as HTMLImageElement[];
 
         let lastWidth = -1;
@@ -80,7 +75,7 @@ export default function Hero() {
         };
         resize();
         window.addEventListener("resize", resize);
-        return () => { window.removeEventListener("resize", resize); clearTimeout(timer); };
+        return () => { window.removeEventListener("resize", resize); };
     }, []);
 
     /* ─── GSAP: pinType:"transform" keeps the hero in document flow ─────
@@ -121,7 +116,12 @@ export default function Hero() {
                 frameRef.current.current = idx;
                 const draw = (canvasRef as any).drawFrame;
                 const imgs = imagesRef.current;
-                if (imgs[idx] && draw) draw(idx);
+
+                // Wrap in requestAnimationFrame to sync drawing precisely with the browser's screen refresh,
+                // preventing dropped frames and stuttering during rapid scroll on constrained mobile CPUs.
+                if (imgs[idx] && draw) {
+                    requestAnimationFrame(() => draw(idx));
+                }
             },
         }, 0);
 
@@ -181,8 +181,15 @@ export default function Hero() {
             className="relative w-full h-[100svh] overflow-hidden"
             style={{ background: "#050e0a", zIndex: 0 }}
         >
-            {/* Video canvas */}
-            <canvas ref={canvasRef} className="hero-canvas" />
+            {/* Video canvas — Hardware Accelerated */}
+            <canvas
+                ref={canvasRef}
+                className="hero-canvas"
+                style={{
+                    willChange: "transform",
+                    transform: "translateZ(0)" // Forces GPU acceleration on mobile
+                }}
+            />
 
             {/* Radial vignette */}
             <div className="absolute inset-0 pointer-events-none" style={{
