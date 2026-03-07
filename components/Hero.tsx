@@ -87,91 +87,90 @@ export default function Hero() {
         const section = sectionRef.current;
         if (!section) return;
 
-        const proxy = { frame: 0 };
+        // Use matchMedia to create responsive ScrollTrigger settings
+        const mm = gsap.matchMedia();
 
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: section,
-                start: "top top",
-                // 700% = 7× viewport height of scroll distance.
-                // With -100vh margin on sections, About enters at 85% of this pin.
-                // This ensures Phase 1 (0-12%), Phase 2 (20-50%), Phase 3 (58-75%)
-                // all play completely before About slides over.
-                end: "+=700%",
-                scrub: 1.8,    // slightly smoother for longer timeline
-                pin: true,
-                anticipatePin: 1,
-                pinSpacing: true,
-            },
-            defaults: { ease: "none" },
+        mm.add({
+            isMobile: "(max-width: 768px)",
+            isDesktop: "(min-width: 769px)"
+        }, (context) => {
+            const { isMobile } = context.conditions as { isMobile: boolean };
+
+            // On mobile, the scroll distance is much longer (1200% of viewport height)
+            // This forces the user to scroll physically further to scrub through the 240 frames,
+            // resulting in a "looser", slower, and more controlled video playback on touch.
+            const scrollDistance = isMobile ? "+=1200%" : "+=700%";
+
+            const proxy = { frame: 0 };
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top top",
+                    end: scrollDistance,
+                    scrub: 1.8,
+                    pin: true,
+                    anticipatePin: 1,
+                    pinSpacing: true,
+                },
+                defaults: { ease: "none" },
+            });
+
+            /* ── Video frames (full duration) ───────────────────────────────── */
+            tl.to(proxy, {
+                frame: TOTAL_FRAMES - 1,
+                snap: "frame",
+                duration: 1,
+                onUpdate: () => {
+                    const idx = Math.round(proxy.frame);
+                    frameRef.current.current = idx;
+                    const draw = (canvasRef as any).drawFrame;
+                    const imgs = imagesRef.current;
+
+                    if (imgs[idx] && draw) {
+                        requestAnimationFrame(() => draw(idx));
+                    }
+                },
+            }, 0);
+
+            const p1 = phase1Ref.current;
+            const sc = scrollRef.current;
+            const lb = labelRef.current;
+
+            if (p1) {
+                gsap.set(p1, { autoAlpha: 1, y: 0 });
+                tl.to(p1, { autoAlpha: 0, y: -80, ease: "power2.in", duration: 0.07 }, 0.12);
+            }
+            if (sc) {
+                gsap.set(sc, { autoAlpha: 1, y: 0 });
+                tl.to(sc, { autoAlpha: 0, y: -20, ease: "power2.in", duration: 0.05 }, 0.10);
+            }
+            if (lb) {
+                gsap.set(lb, { autoAlpha: 1, x: 0 });
+                tl.to(lb, { autoAlpha: 0, x: 20, ease: "power2.in", duration: 0.05 }, 0.78);
+            }
+
+            const p2 = phase2Ref.current;
+            if (p2) {
+                tl.fromTo(p2,
+                    { autoAlpha: 0, y: 80 },
+                    { autoAlpha: 1, y: 0, ease: "power2.out", duration: 0.12 }, 0.20
+                );
+                tl.to(p2, { autoAlpha: 0, y: -80, ease: "power2.in", duration: 0.10 }, 0.46);
+            }
+
+            const p3 = phase3Ref.current;
+            if (p3) {
+                tl.fromTo(p3,
+                    { autoAlpha: 0, y: 60 },
+                    { autoAlpha: 1, y: 0, ease: "power2.out", duration: 0.12 }, 0.55
+                );
+                tl.to(p3, { autoAlpha: 0, y: -40, ease: "power2.in", duration: 0.10 }, 0.78);
+            }
         });
 
-        /* ── Video frames (full duration) ───────────────────────────────── */
-        tl.to(proxy, {
-            frame: TOTAL_FRAMES - 1,
-            snap: "frame",
-            duration: 1,
-            onUpdate: () => {
-                const idx = Math.round(proxy.frame);
-                frameRef.current.current = idx;
-                const draw = (canvasRef as any).drawFrame;
-                const imgs = imagesRef.current;
+        return () => mm.revert(); // clean up matchMedia on unmount
 
-                // Wrap in requestAnimationFrame to sync drawing precisely with the browser's screen refresh,
-                // preventing dropped frames and stuttering during rapid scroll on constrained mobile CPUs.
-                if (imgs[idx] && draw) {
-                    requestAnimationFrame(() => draw(idx));
-                }
-            },
-        }, 0);
-
-        /*
-         * Phase timing (as fraction of total pin 0→1):
-         *   Phase 1 — brand mark:  visible at 0, exits at 0.12
-         *   Phase 2 — brand story: enters 0.20, exits 0.49
-         *   Phase 3 — CTA:         enters 0.55, holds to 0.78, fades 0.78-0.85
-         *   About section enters viewport at 0.85 (with -100vh margin on wrapper)
-         * This ensures all 3 phases play completely before About slides over.
-         */
-        const p1 = phase1Ref.current;
-        const sc = scrollRef.current;
-        const lb = labelRef.current;
-
-        if (p1) {
-            gsap.set(p1, { autoAlpha: 1, y: 0 });
-            // Phase 1 exits at 12%
-            tl.to(p1, { autoAlpha: 0, y: -80, ease: "power2.in", duration: 0.07 }, 0.12);
-        }
-        if (sc) {
-            gsap.set(sc, { autoAlpha: 1, y: 0 });
-            tl.to(sc, { autoAlpha: 0, y: -20, ease: "power2.in", duration: 0.05 }, 0.10);
-        }
-        if (lb) {
-            gsap.set(lb, { autoAlpha: 1, x: 0 });
-            // Label holds until 78% then fades with hero
-            tl.to(lb, { autoAlpha: 0, x: 20, ease: "power2.in", duration: 0.05 }, 0.78);
-        }
-
-        /* ── Phase 2: brand story enters 0.20, exits 0.49 ───────────────── */
-        const p2 = phase2Ref.current;
-        if (p2) {
-            tl.fromTo(p2,
-                { autoAlpha: 0, y: 80 },
-                { autoAlpha: 1, y: 0, ease: "power2.out", duration: 0.12 }, 0.20
-            );
-            tl.to(p2, { autoAlpha: 0, y: -80, ease: "power2.in", duration: 0.10 }, 0.46);
-        }
-
-        /* ── Phase 3: CTA enters 0.55, holds visibly, fades at 0.78 ─────── */
-        const p3 = phase3Ref.current;
-        if (p3) {
-            tl.fromTo(p3,
-                { autoAlpha: 0, y: 60 },
-                { autoAlpha: 1, y: 0, ease: "power2.out", duration: 0.12 }, 0.55
-            );
-            // CTA fades out gently as About starts to appear
-            tl.to(p3, { autoAlpha: 0, y: -40, ease: "power2.in", duration: 0.10 }, 0.78);
-        }
     }, { scope: sectionRef });
 
     return (
