@@ -66,6 +66,7 @@ export default function Showcase() {
                     fill
                     className="object-cover object-top"
                     unoptimized={true}
+                    priority
                 />
 
                 {/* Overlays to ensure text legibility */}
