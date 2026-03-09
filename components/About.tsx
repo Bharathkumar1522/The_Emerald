@@ -81,7 +81,7 @@ export default function About() {
              * Uniform padding on all sides keeps it visually balanced.
              */}
             <div
-                className="relative z-10 max-w-screen-xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-12 lg:gap-16 flex-1 items-center w-full px-6 md:px-12 lg:px-20"
+                className="relative z-10 max-w-[1600px] mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-12 lg:gap-16 flex-1 items-center w-full px-6 md:px-12 lg:px-20"
             >
                 {/* ── LEFT: text column ─────────────────────────────────── */}
                 <div ref={textColRef} className="flex flex-col justify-center py-0 lg:py-12 pr-0 lg:pr-12 gap-12 lg:gap-16">

@@ -139,7 +139,7 @@ export default function Collections() {
                     className="relative z-10 flex-shrink-0 opacity-0 px-6 md:px-16 lg:px-24"
                     style={{ paddingTop: "clamp(28px, 4vh, 48px)", paddingBottom: "clamp(12px, 1.8vh, 24px)" }}
                 >
-                    <div className="flex items-end justify-between max-w-screen-xl mx-auto">
+                    <div className="flex items-end justify-between max-w-[1600px] mx-auto">
                         <div>
                             <div className="flex items-center gap-4 mb-2">
                                 <div className="w-5 h-px" style={{ background: "var(--forest)", opacity: 0.35 }} />
@@ -173,8 +173,8 @@ export default function Collections() {
                 className="relative z-10 flex items-stretch flex-1"
                 style={{
                     gap: "clamp(12px, 1.4vw, 24px)",
-                    paddingLeft: "clamp(24px, 6vw, 96px)",
-                    paddingRight: "clamp(24px, 6vw, 96px)",
+                    paddingLeft: "max(clamp(24px, 6vw, 96px), calc((100vw - 1600px) / 2))",
+                    paddingRight: "max(clamp(24px, 6vw, 96px), calc((100vw - 1600px) / 2))",
                     paddingBottom: "clamp(16px, 2.5vh, 32px)",
                     width: "max-content",
                     minHeight: 0,

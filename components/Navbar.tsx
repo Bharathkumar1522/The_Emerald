@@ -124,8 +124,8 @@ export default function Navbar() {
     // Clever navbar classes
     const glassClass = isScrolled
         ? (theme === "dark"
-            ? "nav-glass border border-white/5 top-4 w-[calc(100%-2rem)] max-w-screen-xl rounded-full"
-            : "nav-glass-light border border-black/5 top-4 w-[calc(100%-2rem)] max-w-screen-xl rounded-full")
+            ? "nav-glass border border-white/5 top-4 w-[calc(100%-2rem)] max-w-[1600px] rounded-full"
+            : "nav-glass-light border border-black/5 top-4 w-[calc(100%-2rem)] max-w-[1600px] rounded-full")
         : "bg-transparent border border-transparent top-6 w-full max-w-none rounded-none"; // Wide, completely transparent at top
 
     const transformClass = isHidden

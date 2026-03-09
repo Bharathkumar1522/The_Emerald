@@ -67,7 +67,7 @@ export default function Lifestyle() {
                 backgroundSize: "80px 80px",
             }} />
 
-            <div className="relative z-10 max-w-screen-xl mx-auto px-6 md:px-12 lg:px-20">
+            <div className="relative z-10 max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20">
 
                 {/* ─── Header ───────────────────────────────────────────── */}
                 <div ref={headerWrapperRef} className="mb-16 md:mb-20">
